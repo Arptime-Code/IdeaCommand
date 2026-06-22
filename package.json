@@ -1,0 +1,9 @@
+{
+  "name": "idea-manager",
+  "version": "0.1.0",
+  "description": "Minimal CLI tool for structuring and managing ideas",
+  "bin": {
+    "ideaManager": "commands/cli.js"
+  },
+  "private": true
+}

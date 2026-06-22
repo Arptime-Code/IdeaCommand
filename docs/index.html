@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IdeaCommand — Documentation</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+:root {
+  --bg: #1a1a1e;
+  --bg-2: #222226;
+  --bg-3: #2a2a30;
+  --bg-4: #333339;
+  --sidebar-bg: #161619;
+  --text: #e0e0e4;
+  --text-dim: #8a8a92;
+  --text-bright: #f0f0f4;
+  --accent: #6a8bff;
+  --accent-hover: #8ba3ff;
+  --border: #2e2e34;
+  --code-bg: #121216;
+  --warning: #d4a04a;
+  --error: #e05959;
+  --success: #5abf7a;
+  --sidebar-width: 280px;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-mono: "SF Mono", "Fira Code", "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+  line-height: 1.6;
+  font-size: 15px;
+}
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  overflow: hidden;
+}
+.sidebar-header {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-header h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-bright);
+  letter-spacing: -0.3px;
+}
+.sidebar-header p {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.search-box {
+  margin: 12px 20px;
+  padding: 8px 12px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: var(--font);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.search-box:focus {
+  border-color: var(--accent);
+}
+.search-box::placeholder {
+  color: var(--text-dim);
+}
+.nav-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+.nav-list::-webkit-scrollbar { width: 6px; }
+.nav-list::-webkit-scrollbar-track { background: transparent; }
+.nav-list::-webkit-scrollbar-thumb { background: var(--bg-4); border-radius: 3px; }
+.nav-item {
+  display: block;
+  padding: 7px 20px;
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: all 0.12s;
+  border-left: 2px solid transparent;
+}
+.nav-item:hover {
+  color: var(--text);
+  background: rgba(255,255,255,0.03);
+}
+.nav-item.active {
+  color: var(--text-bright);
+  background: rgba(106,139,255,0.08);
+  border-left-color: var(--accent);
+}
+.nav-item .nav-index {
+  color: var(--text-dim);
+  font-size: 11px;
+  margin-right: 6px;
+  opacity: 0.6;
+}
+.main {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  max-width: 860px;
+  padding: 48px 56px 80px;
+  min-height: 100vh;
+}
+.content h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-bottom: 24px;
+  letter-spacing: -0.5px;
+  line-height: 1.3;
+}
+.content h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-top: 40px;
+  margin-bottom: 14px;
+  letter-spacing: -0.2px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.content h3 {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 28px;
+  margin-bottom: 10px;
+}
+.content p {
+  margin-bottom: 16px;
+}
+.content a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.12s;
+}
+.content a:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+.content ul, .content ol {
+  margin-bottom: 16px;
+  padding-left: 24px;
+}
+.content li {
+  margin-bottom: 4px;
+}
+.content code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--accent);
+}
+.content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+.content pre code {
+  background: none;
+  padding: 0;
+  color: var(--text);
+  font-size: inherit;
+}
+.content blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 10px 16px;
+  margin: 16px 0;
+  background: rgba(106,139,255,0.06);
+  border-radius: 0 6px 6px 0;
+  color: var(--text-dim);
+}
+.content blockquote p {
+  margin-bottom: 0;
+}
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+.content th, .content td {
+  text-align: left;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  font-size: 14px;
+}
+.content th {
+  background: var(--bg-2);
+  font-weight: 600;
+  color: var(--text-bright);
+}
+.content td {
+  color: var(--text);
+}
+.content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 32px 0;
+}
+.content img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin: 16px 0;
+}
+.page-nav {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+}
+.page-nav a {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.12s;
+}
+.page-nav a:hover {
+  color: var(--accent-hover);
+}
+.page-nav .nav-prev::before { content: "← "; }
+.page-nav .nav-next::after { content: " →"; }
+@media (max-width: 768px) {
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    max-height: 260px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .main {
+    margin-left: 0;
+    padding: 28px 20px 60px;
+  }
+  .nav-list { max-height: 160px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h1>IdeaCommand</h1>
+    <p>Documentation</p>
+  </div>
+  <input type="text" class="search-box" id="searchBox" placeholder="Search pages..." oninput="filterNav()">
+  <div class="nav-list" id="navList"></div>
+</nav>
+
+<main class="main">
+  <div class="content" id="content">
+    <p>Loading documentation...</p>
+  </div>
+  <div class="page-nav" id="pageNav"></div>
+</main>
+
+<script>
+var pages = [];
+var currentId = null;
+
+function loadPages() {
+  fetch('pages.json')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      pages = data;
+
+      if (pages.length === 0) { return; }
+
+      renderNav();
+
+      var hash = location.hash.slice(1);
+      if (hash) {
+        navigateTo(hash);
+      } else {
+        navigateTo(pages[0].id);
+      }
+    });
+}
+
+function renderNav() {
+  var list = document.getElementById('navList');
+  list.innerHTML = '';
+
+  for (var i = 0; i < pages.length; i++) {
+    var a = document.createElement('a');
+    a.className = 'nav-item';
+    a.setAttribute('data-id', pages[i].id);
+    a.innerHTML = '<span class="nav-index">' + (i + 1).toString().padStart(2, '0') + '</span> ' + pages[i].title;
+    a.onclick = function(id) {
+      return function() {
+        navigateTo(id);
+      };
+    }(pages[i].id);
+    list.appendChild(a);
+  }
+}
+
+function filterNav() {
+  var query = document.getElementById('searchBox').value.toLowerCase();
+  var items = document.querySelectorAll('.nav-item');
+
+  for (var i = 0; i < items.length; i++) {
+    var text = items[i].textContent.toLowerCase();
+    if (text.indexOf(query) !== -1) {
+      items[i].style.display = '';
+    } else {
+      items[i].style.display = 'none';
+    }
+  }
+}
+
+function navigateTo(id) {
+  if (!id) { return; }
+  currentId = id;
+  location.hash = id;
+
+  // Update active nav item
+  var items = document.querySelectorAll('.nav-item');
+  for (var i = 0; i < items.length; i++) {
+    if (items[i].getAttribute('data-id') === id) {
+      items[i].classList.add('active');
+      items[i].scrollIntoView({ block: 'nearest' });
+    } else {
+      items[i].classList.remove('active');
+    }
+  }
+
+  // Find the page
+  var page = null;
+  for (var i = 0; i < pages.length; i++) {
+    if (pages[i].id === id) {
+      page = pages[i];
+      break;
+    }
+  }
+
+  if (!page) {
+    document.getElementById('content').innerHTML = '<p>Page not found.</p>';
+    return;
+  }
+
+  // Load the markdown file
+  fetch(page.file)
+    .then(function(r) { return r.text(); })
+    .then(function(md) {
+      var html = marked.parse(md);
+      document.getElementById('content').innerHTML = html;
+      updatePageNav();
+      window.scrollTo(0, 0);
+    })
+    .catch(function() {
+      document.getElementById('content').innerHTML = '<p>Error loading page.</p>';
+    });
+}
+
+function updatePageNav() {
+  var nav = document.getElementById('pageNav');
+  var currentIndex = -1;
+  for (var i = 0; i < pages.length; i++) {
+    if (pages[i].id === currentId) {
+      currentIndex = i;
+      break;
+    }
+  }
+
+  var html = '';
+  if (currentIndex > 0) {
+    html += '<a href="#" class="nav-prev" onclick="navigateTo(\'' + pages[currentIndex - 1].id + '\'); return false;">' + pages[currentIndex - 1].title + '</a>';
+  } else {
+    html += '<span></span>';
+  }
+  if (currentIndex >= 0 && currentIndex < pages.length - 1) {
+    html += '<a href="#" class="nav-next" onclick="navigateTo(\'' + pages[currentIndex + 1].id + '\'); return false;">' + pages[currentIndex + 1].title + '</a>';
+  }
+  nav.innerHTML = html;
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowLeft') {
+    var currentIndex = -1;
+    for (var i = 0; i < pages.length; i++) {
+      if (pages[i].id === currentId) { currentIndex = i; break; }
+    }
+    if (currentIndex > 0) { navigateTo(pages[currentIndex - 1].id); }
+  } else if (e.key === 'ArrowRight') {
+    var currentIndex = -1;
+    for (var i = 0; i < pages.length; i++) {
+      if (pages[i].id === currentId) { currentIndex = i; break; }
+    }
+    if (currentIndex >= 0 && currentIndex < pages.length - 1) { navigateTo(pages[currentIndex + 1].id); }
+  }
+});
+
+window.onload = loadPages;
+</script>
+</body>
+</html>

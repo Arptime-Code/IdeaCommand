@@ -1,0 +1,19 @@
+[
+  { "id": "01-introduction", "title": "Introduction", "file": "01-introduction.md" },
+  { "id": "02-installation", "title": "Installation", "file": "02-installation.md" },
+  { "id": "03-quick-start", "title": "Quick Start", "file": "03-quick-start.md" },
+  { "id": "04-core-concepts", "title": "Core Concepts", "file": "04-core-concepts.md" },
+  { "id": "05-cli-usage", "title": "CLI Usage", "file": "05-cli-usage.md" },
+  { "id": "06-content-system", "title": "Content System", "file": "06-content-system.md" },
+  { "id": "07-compilation", "title": "Compilation", "file": "07-compilation.md" },
+  { "id": "08-value-references", "title": "Value References", "file": "08-value-references.md" },
+  { "id": "09-navigation", "title": "Navigation", "file": "09-navigation.md" },
+  { "id": "10-linking", "title": "Linking Ideas", "file": "10-linking.md" },
+  { "id": "11-potential-ideas", "title": "Potential Ideas", "file": "11-potential-ideas.md" },
+  { "id": "12-new-command", "title": "The New Command", "file": "12-new-command.md" },
+  { "id": "13-error-handling", "title": "Error Handling", "file": "13-error-handling.md" },
+  { "id": "14-development", "title": "Development", "file": "14-development.md" },
+  { "id": "15-architecture", "title": "Architecture", "file": "15-architecture.md" },
+  { "id": "16-glossary", "title": "Glossary", "file": "16-glossary.md" },
+  { "id": "17-roadmap", "title": "Roadmap", "file": "17-roadmap.md" }
+]

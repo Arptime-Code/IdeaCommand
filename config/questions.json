@@ -1,0 +1,22 @@
+{
+  "questions": [
+    {
+      "id": "concept-or-value",
+      "text": "Is \"%name%\" just a concept or idea and not a value?",
+      "contextType": "name-only",
+      "negativeBehavior": "stop"
+    },
+    {
+      "id": "direct-child-of-parent",
+      "text": "Is \"%name%\" part of \"%parent%\" directly and not in a branch next to it?",
+      "contextType": "name-and-parent",
+      "negativeBehavior": "save-potential"
+    },
+    {
+      "id": "logically-only-parent",
+      "text": "Can \"%name%\" logically only be part of \"%parent%\" and not a sub-idea of another sub-idea under \"%parent%\"?",
+      "contextType": "name-and-parent",
+      "negativeBehavior": "save-potential"
+    }
+  ]
+}
