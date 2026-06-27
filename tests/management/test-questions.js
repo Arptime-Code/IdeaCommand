@@ -28,11 +28,11 @@ for (var i = 0; i < config.questions.length; i++) {
   assert(q.id, 'question ' + i + ' should have an id');
   assert(q.text, 'question ' + i + ' should have text');
   assert(q.contextType, 'question ' + i + ' should have contextType');
-  assert(q.negativeBehavior, 'question ' + i + ' should have negativeBehavior');
 
   var validContext = q.contextType === 'name-only' || q.contextType === 'name-and-parent';
   assert(validContext, 'question ' + i + ' contextType should be valid');
 
+  assert(q.negativeBehavior, 'question ' + i + ' should have negativeBehavior');
   var validBehavior = q.negativeBehavior === 'stop' || q.negativeBehavior === 'save-potential';
   assert(validBehavior, 'question ' + i + ' negativeBehavior should be valid');
 }

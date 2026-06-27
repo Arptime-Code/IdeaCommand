@@ -1,61 +1,56 @@
 #!/usr/bin/env node
 
+// 1. Constants
+
 var COMMANDS = {
   'new': './management/new',
   'remove': './management/remove',
-  'link': './linking/link',
   'unlink': './linking/unlink',
-  'list': './browsing/list',
-  'find': './browsing/find',
-  'navigate': './navigation/navigate',
   'potential': './management/potential',
   'content': './content/content',
   'compile': './content/compile',
   'repl': './repl'
 };
 
+// 2. Variable initialization
+
 var args = process.argv.slice(2);
+
+// 3. Main workflow function
+
+// No arguments — launch the REPL directly
+if (args.length === 0) {
+  var repl = require('./repl');
+  repl.run([]);
+  return;
+}
+
+// Has arguments — run as CLI commands (for scripting and tests)
+
 var command = args[0];
 var commandArgs = args.slice(1);
 
-function main() {
-  if (!command) {
-    printUsage();
-    process.exit(1);
-  }
-
-  var modulePath = COMMANDS[command];
-  if (!modulePath) {
-    console.log('Unknown command: ' + command);
-    process.exit(1);
-  }
-
-  var commandModule = require(modulePath);
-  var result = commandModule.run(commandArgs);
-
-  if (!result.success) {
-    if (result.error) {
-      console.log(result.error);
-    }
-    process.exit(1);
-  }
+// Explicit repl command
+if (command === 'repl') {
+  require('./repl').run(commandArgs);
+  return;
 }
 
-function printUsage() {
-  console.log('Usage: ideaManager <command> [args]');
-  console.log('');
-  console.log('Commands:');
-  console.log('  new <name>       Create a new idea');
-  console.log('  remove <name>    Delete an idea');
-  console.log('  link <p> <c>     Link child idea under parent');
-  console.log('  unlink <p> <c>   Remove a link');
-  console.log('  list <name>      List sub-ideas under an idea');
-  console.log('  find <query>     Search ideas by name');
-  console.log('  navigate <name>  Navigate to an idea (sets it as current node)');
-  console.log('  potential <cmd>  Manage potential ideas (list, remove)');
-  console.log('  content          Enter interactive content editor for current node');
-  console.log('  compile          Compile full text output from current node');
-  console.log('  repl             Interactive REPL session');
+var modulePath = COMMANDS[command];
+
+if (!modulePath) {
+  console.log('Unknown command: ' + command);
+  process.exit(1);
 }
 
-main();
+var commandModule = require(modulePath);
+var result = commandModule.run(commandArgs);
+
+if (!result.success) {
+  if (result.error) {
+    console.log(result.error);
+  }
+  process.exit(1);
+}
+
+// 4. Subworkflow functions — none (all logic is inline)

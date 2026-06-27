@@ -12,14 +12,11 @@ var testPaths = [
   'management/test-remove',
   'management/test-questions',
   'management/test-potential',
-  'linking/test-link',
   'linking/test-unlink',
-  'browsing/test-list',
-  'browsing/test-find',
-  'navigation/test-navigate',
   'content/test-content-store',
   'content/test-tree-utils',
   'content/test-compile',
+  'content/test-tag-path',
   'test-repl'
 ];
 

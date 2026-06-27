@@ -27,7 +27,7 @@ var env = Object.assign({}, process.env, {
   IDEA_STATE_DIR: replStateDir
 });
 
-var child = CHILD_PROCESS.spawn('node', [indexJs, 'repl'], {
+var child = CHILD_PROCESS.spawn('node', [indexJs], {
   env: env,
   stdio: ['pipe', 'pipe', 'pipe']
 });
@@ -49,8 +49,8 @@ var commandList = [
   'y',
   'y',
   'y',
-  'link pizza cooking',
-  'list pizza',
+  // navigate root — should show children (cooking, pizza) and no parents
+  'navigate root',
   'exit'
 ];
 
@@ -75,7 +75,10 @@ child.on('close', function(code) {
     assert(code === 0, 'REPL should exit with code 0');
     assert(output.indexOf('Created idea: cooking') !== -1, 'REPL should create cooking');
     assert(output.indexOf('Created idea: pizza') !== -1, 'REPL should create pizza');
-    assert(output.indexOf('cooking') !== -1, 'list pizza should show cooking');
+    assert(output.indexOf('Navigated to: root') !== -1, 'REPL should navigate to root');
+    assert(output.indexOf('Children:') !== -1, 'REPL should show children');
+    assert(output.indexOf('cooking') !== -1, 'children should include cooking');
+    assert(output.indexOf('pizza') !== -1, 'children should include pizza');
     console.log('PASS: test-repl');
     checked = true;
     process.exit(0);

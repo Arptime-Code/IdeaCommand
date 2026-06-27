@@ -25,7 +25,6 @@ function formatText(template, name, parent) {
   var result = template;
 
   for (var i = 0; i < result.length; i++) {
-    // Find each %...% placeholder and replace it
     if (result[i] === '%') {
       var endIndex = i + 1;
       while (endIndex < result.length && result[endIndex] !== '%') {
@@ -85,6 +84,7 @@ function askQuestions(name, parent, callbacks, rl) {
     ownRl = true;
   }
 
+  // Recursive helper that asks the next question in the filtered list
   function askNext() {
     if (currentIndex >= filtered.length) {
       if (ownRl) {
@@ -95,6 +95,7 @@ function askQuestions(name, parent, callbacks, rl) {
     }
 
     var question = filtered[currentIndex];
+    var questionType = question.type || 'yesno';
 
     // Print context info before the question
     if (question.contextType === 'name-only') {
@@ -106,33 +107,46 @@ function askQuestions(name, parent, callbacks, rl) {
       console.log('');
     }
 
-    var displayText = formatText(question.text, name, parent || '');
+    // advanceToNext increments currentIndex then calls askNext for the NEXT question
+    function advanceToNext() {
+      currentIndex++;
+      askNext();
+    }
 
-    rl.question(displayText + ' (y/n): ', function(answer) {
-      var trimmed = answer.trim().toLowerCase();
-
-      if (trimmed === 'y') {
-        currentIndex++;
-        askNext();
-      } else if (trimmed === 'n') {
-        if (ownRl) {
-          rl.close();
-        }
-
-        if (question.negativeBehavior === 'save-potential') {
-          callbacks.onSavePotential(name);
-        } else {
-          // 'stop' behavior — silently cancel
-          callbacks.onStop();
-        }
-      } else {
-        console.log('Please answer y or n.');
-        askNext();
-      }
-    });
+    if (questionType === 'yesno' || questionType === undefined) {
+      askYesNoQuestion(rl, question, name, parent, ownRl, callbacks, advanceToNext);
+    }
   }
 
   askNext();
+}
+
+// 4. Subworkflow functions
+
+// Handle a yes/no type question — uses onNext to proceed after answering
+function askYesNoQuestion(rl, question, name, parent, ownRl, callbacks, onNext) {
+  var displayText = formatText(question.text, name, parent || '');
+
+  rl.question(displayText + ' (y/n): ', function(answer) {
+    var trimmed = answer.trim().toLowerCase();
+
+    if (trimmed === 'y') {
+      onNext();
+    } else if (trimmed === 'n') {
+      if (ownRl) {
+        rl.close();
+      }
+
+      if (question.negativeBehavior === 'save-potential') {
+        callbacks.onSavePotential(name);
+      } else {
+        callbacks.onStop();
+      }
+    } else {
+      console.log('Please answer y or n.');
+      askYesNoQuestion(rl, question, name, parent, ownRl, callbacks, onNext);
+    }
+  });
 }
 
 module.exports = {

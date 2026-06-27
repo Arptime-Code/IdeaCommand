@@ -1,9 +1,9 @@
-// 1. Constants — none
-
-// 2. Variable initialization
+// 1. Constants
 
 var getCurrentNode = require('../lib/navigate-state').getCurrentNode;
-var contentRepl = require('./content-repl');
+var contentRepl = require('./repl/repl');
+
+// 2. Variable initialization — none
 
 // 3. Main workflow function
 
@@ -40,5 +40,7 @@ function run(args) {
   // Keep process alive for the interactive REPL
   return { success: true };
 }
+
+// 4. Subworkflow functions — none
 
 module.exports = { run: run };

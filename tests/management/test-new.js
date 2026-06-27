@@ -51,7 +51,7 @@ FS.mkdirSync(stateDir, { recursive: true });
 FS.mkdirSync(PATH.join(dataDir, 'root'), { recursive: true });
 FS.writeFileSync(PATH.join(stateDir, '.current-node.json'), JSON.stringify({ currentNode: 'root' }));
 
-// Test 1: Create a new idea under parent (answers: y to all 3 questions)
+// Test 1: Create a new idea under parent (3 y answers, no tag)
 var result = cliWithParent(['new', 'cooking'], 'y\ny\ny\n');
 assert(result.code === 0, 'new cooking should succeed');
 assert(result.stdout.indexOf('Created idea: cooking under root') !== -1, 'should print created message');

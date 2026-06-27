@@ -1,3 +1,9 @@
+// 1. Constants — none
+
+// 2. Variable initialization — none
+
+// 3. Main workflow function
+
 function validateName(name) {
   if (!name || name.length === 0) {
     return 'Name cannot be empty';
@@ -23,5 +29,7 @@ function validateName(name) {
 
   return null;
 }
+
+// 4. Subworkflow functions — none
 
 module.exports = validateName;

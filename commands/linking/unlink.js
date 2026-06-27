@@ -1,19 +1,27 @@
+// 1. Constants
 var FS = require('fs');
 var PATH = require('path');
 var getIdeaDir = require('../lib/data-path').getIdeaDir;
+var getCurrentNode = require('../lib/navigate-state').getCurrentNode;
 var validateName = require('../lib/validate-name');
 
+// 2. Variable initialization — none
+
+// 3. Main workflow function
+
 function run(args) {
-  if (args.length < 2) {
-    return { success: false, error: 'Usage: ideaManager unlink <parent> <child>' };
+  if (args.length < 1) {
+    return { success: false, error: 'Usage: ideaManager unlink <child>' };
   }
 
-  var parent = args[0];
-  var child = args[1];
+  var child = args[0];
+  var parent = getCurrentNode();
 
-  var parentError = validateName(parent);
-  if (parentError) {
-    return { success: false, error: parentError };
+  if (!parent) {
+    return {
+      success: false,
+      error: 'No node selected. Use \'ideaManager navigate <name>\' first to select the parent.'
+    };
   }
 
   var childError = validateName(child);
@@ -37,5 +45,7 @@ function run(args) {
   console.log('Unlinked ' + child + ' from ' + parent);
   return { success: true };
 }
+
+// 4. Subworkflow functions — none
 
 module.exports = { run: run };

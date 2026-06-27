@@ -30,6 +30,35 @@ function findParent(ideaName) {
   return null;
 }
 
+// Find ALL parents that have a content file for this child
+// Returns array of parent names (may be empty)
+function findAllParents(ideaName) {
+  var dataDir = getDataDir();
+  var parents = [];
+
+  if (!FS.existsSync(dataDir)) {
+    return parents;
+  }
+
+  var entries = FS.readdirSync(dataDir);
+
+  for (var i = 0; i < entries.length; i++) {
+    var contentPath = PATH.join(dataDir, entries[i], ideaName + '.json');
+
+    if (FS.existsSync(contentPath)) {
+      parents.push(entries[i]);
+    }
+  }
+
+  return parents;
+}
+
+// Get tags for an idea — tags = all direct parent names across the tree
+// This is the same as findAllParents but with a clearer name for the tag system
+function getTags(ideaName) {
+  return findAllParents(ideaName);
+}
+
 // Build the full path from root to this idea as an array of names
 // Returns [] if idea directory does not exist or circular links found
 function findAbsolutePath(ideaName) {
@@ -97,9 +126,74 @@ function listChildren(parentName) {
   return children;
 }
 
+// Find exactly one child with matching tag
+// Returns child name or null if 0 or >1 children match
+function findChildByUniqueTag(parentName, tag) {
+  var children = listChildren(parentName);
+  var matches = [];
+
+  for (var i = 0; i < children.length; i++) {
+    var childTags = getTags(children[i]);
+
+    for (var j = 0; j < childTags.length; j++) {
+      if (childTags[j] === tag) {
+        matches.push(children[i]);
+        break;
+      }
+    }
+  }
+
+  if (matches.length === 1) {
+    return matches[0];
+  }
+
+  return null;
+}
+
+// Check if parent's tags include the given tag
+// Root is special: parentHasTag('root', 'root') returns true
+function parentHasTag(parentName, tag) {
+  if (parentName === 'root' && tag === 'root') {
+    return true;
+  }
+
+  var tags = getTags(parentName);
+
+  for (var i = 0; i < tags.length; i++) {
+    if (tags[i] === tag) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+// Get the first tag from an idea's tag list.
+// Returns empty string if no tags.
+// Used for display purposes in the navigator.
+function getFirstTag(ideaName) {
+  var tags = getTags(ideaName);
+
+  if (tags.length > 0) {
+    return tags[0];
+  }
+
+  // Special case for root
+  if (ideaName === 'root') {
+    return 'root';
+  }
+
+  return '';
+}
+
 module.exports = {
   findParent: findParent,
+  findAllParents: findAllParents,
+  getTags: getTags,
   findAbsolutePath: findAbsolutePath,
   childExists: childExists,
-  listChildren: listChildren
+  listChildren: listChildren,
+  findChildByUniqueTag: findChildByUniqueTag,
+  parentHasTag: parentHasTag,
+  getFirstTag: getFirstTag
 };

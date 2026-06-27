@@ -1,0 +1,20 @@
+- remove libk becaus eou just link when yu do navigate and then craete a new one then ou auto link to that as the parent
+- also unlink automaticaklly from the parent yyo are from so you dont have to say the parent
+- also same for the tag command you rename the tag for the node you navigated to
+
+
+
+what about when i later do content command but a node i want to get to is no yet created???
+
+
+
+
+
+
+Into data:
+- ProgrammingProjects (3D Game/ Own AI or so)
+- Youtube
+- ProfilseminarProject
+- SchoolInGeneral
+- Jobs/Bewerbung/...
+- Hobbies

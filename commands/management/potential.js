@@ -4,25 +4,22 @@ var FS = require('fs');
 
 var PROJECT_ROOT = PATH.resolve(__dirname, '..', '..');
 
-// Allow overriding state directory via env var (used in tests)
-function getStateDir() {
-  var envDir = process.env.IDEA_STATE_DIR;
-  if (envDir) {
-    return envDir;
-  }
-  return PROJECT_ROOT;
-}
-
-var POTENTIAL_FILE = PATH.join(getStateDir(), 'potential-ideas.json');
-
 // 2. Variable initialization — none
 
 // 3. Main workflow functions
 
+// Get path to potential ideas JSON file
+function getPotentialFilePath() {
+  var stateDir = process.env.IDEA_STATE_DIR || PROJECT_ROOT;
+  return PATH.join(stateDir, 'potential-ideas.json');
+}
+
 // Read potential ideas from JSON file, return empty array if missing
 function getPotentialIdeas() {
+  var filePath = getPotentialFilePath();
+
   try {
-    var content = FS.readFileSync(POTENTIAL_FILE, 'utf8');
+    var content = FS.readFileSync(filePath, 'utf8');
     var data = JSON.parse(content);
     return data.ideas || [];
   } catch (err) {
@@ -30,10 +27,13 @@ function getPotentialIdeas() {
   }
 }
 
+// 4. Subworkflow functions
+
 // Overwrite the potential ideas list in the JSON file
 function savePotentialIdeas(ideas) {
+  var filePath = getPotentialFilePath();
   var content = JSON.stringify({ ideas: ideas }, null, 2);
-  FS.writeFileSync(POTENTIAL_FILE, content, 'utf8');
+  FS.writeFileSync(filePath, content, 'utf8');
 }
 
 // Add a name to the potential ideas list, skip if duplicate

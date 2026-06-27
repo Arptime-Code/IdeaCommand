@@ -1,18 +1,17 @@
 // 1. Constants
 var FS = require('fs');
-
-// 2. Variable initialization
-
 var getCurrentNode = require('../lib/navigate-state').getCurrentNode;
+var getIdeaDir = require('../lib/data-path').getIdeaDir;
 var store = require('./content-store');
 var treeUtils = require('./tree-utils');
-var getIdeaDir = require('../lib/data-path').getIdeaDir;
+var resolveValuePath = require('./nav/resolve').resolveValuePath;
+
+// 2. Variable initialization — none
 
 // 3. Main workflow function
 
 // Entry point for 'ideaManager compile'
 // Walks the idea tree from the current node and prints only the raw text content
-// Entries are concatenated directly — no automatic newlines between entries
 function run(args) {
   var currentNode = getCurrentNode();
 
@@ -48,8 +47,11 @@ function run(args) {
 // 4. Subworkflow functions
 
 // Recursively walk the tree and collect text content into output
-// All entries are concatenated directly — no automatic newlines added
 function compileNode(nodeName, parentName, output, errors, visited) {
+  if (!nodeName) {
+    return;
+  }
+
   if (visited[nodeName]) {
     return;
   }
@@ -68,7 +70,8 @@ function compileNode(nodeName, parentName, output, errors, visited) {
       if (entry.type === 'text') {
         output.value = output.value + entry.content;
       } else if (entry.type === 'value-from-node') {
-        compileValueFromNode(entry, output, errors, visited);
+        // Use contentSource as parent context (resolves both from parentName and findParent)
+        compileValueFromNode(entry, nodeName, contentSource, output, errors, visited);
       }
     }
   }
@@ -82,12 +85,59 @@ function compileNode(nodeName, parentName, output, errors, visited) {
 }
 
 // Resolve a value-from-node reference and collect its content
-function compileValueFromNode(entry, output, errors, visited) {
+// Supports both the new tag-based path format and the legacy parentName+childName format
+function compileValueFromNode(entry, nodeName, parentName, output, errors, visited) {
+  // New format: tag-based relative path
+  if (entry.path && Array.isArray(entry.path) && entry.path.length > 0) {
+    compileTagPath(entry, nodeName, parentName, output, errors, visited);
+    return;
+  }
+
+  // Legacy format: parentName + childName — kept for backward compatibility
+  if (entry.parentName && entry.childName) {
+    compileLegacyValue(entry, output, errors, visited);
+    return;
+  }
+
+  errors.push('Invalid value-from-node entry: missing both path and parentName/childName.');
+}
+
+// Resolve a tag-based relative path and compile the target
+function compileTagPath(entry, nodeName, parentName, output, errors, visited) {    var result = resolveValuePath(nodeName, entry.path, parentName);
+
+  if (result.error) {
+    errors.push(result.error);
+    return;
+  }
+
+  if (!result.target) {
+    errors.push('Tag path resolved to nothing.');
+    return;
+  }
+
+  // Compile the target node
+  var compileTarget = result.target;
+  var compileParent = result.parent;
+
+  // Check if the target exists
+  var targetDir = getIdeaDir(compileTarget);
+
+  if (!FS.existsSync(targetDir)) {
+    errors.push('Tag path target "' + compileTarget + '" does not exist.');
+    return;
+  }
+
+  compileNode(compileTarget, compileParent, output, errors, visited);
+}
+
+// Compile a legacy value-from-node entry by parentName + childName
+function compileLegacyValue(entry, output, errors, visited) {
   var targetParent = entry.parentName;
   var targetChild = entry.childName;
 
   // Check if the referenced child idea directory exists
-  var refChildDir = getIdeaDir(targetChild);
+  var refChildDir = require('../lib/data-path').getIdeaDir(targetChild);
+
   if (!FS.existsSync(refChildDir)) {
     errors.push('Reference to "' + targetParent + '/' + targetChild + '": idea "' + targetChild + '" not found.');
     return;

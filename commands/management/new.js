@@ -1,8 +1,4 @@
-// 1. Constants — none
-
-// 2. Variable initialization — none
-
-// 3. Main workflow function
+// 1. Constants
 
 var FS = require('fs');
 var PATH = require('path');
@@ -11,6 +7,10 @@ var validateName = require('../lib/validate-name');
 var getCurrentNode = require('../lib/navigate-state').getCurrentNode;
 var askQuestions = require('./questions').askQuestions;
 var addPotentialIdea = require('./potential').addPotentialIdea;
+
+// 2. Variable initialization — none
+
+// 3. Main workflow function
 
 function run(args) {
   if (args.length === 0) {
@@ -97,6 +97,8 @@ function run(args) {
   return { success: true };
 }
 
+// 4. Subworkflow functions
+
 // Re-attach REPL line handler and prompt
 function resumeRepl() {
   if (global.__ideaReplRl && global.__ideaReplHandler) {
@@ -105,8 +107,6 @@ function resumeRepl() {
     global.__ideaReplRl.prompt();
   }
 }
-
-// 4. Subworkflow functions
 
 // Create idea directory and link under parent
 // Returns { success: true } or { success: false, error: "..." }
