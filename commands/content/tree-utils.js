@@ -54,9 +54,11 @@ function findAllParents(ideaName) {
 }
 
 // Get tags for an idea — tags = all direct parent names across the tree
-// This is the same as findAllParents but with a clearer name for the tag system
+// plus the idea's own name (so every node always has at least one unique tag)
 function getTags(ideaName) {
-  return findAllParents(ideaName);
+  var tags = findAllParents(ideaName);
+  tags.push(ideaName);
+  return tags;
 }
 
 // Build the full path from root to this idea as an array of names

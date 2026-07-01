@@ -96,26 +96,11 @@ function showChildrenForSelection(rl, state, onComplete) {
   console.log('--- Children of ' + state.currentNode + ' ---');
 
   var childUniqueTags = show.computeUniqueTagsPerChild(state.currentNode, children);
-  var hasSelectable = false;
 
   for (var i = 0; i < children.length; i++) {
     var childName = children[i];
     var uniqueTags = childUniqueTags[childName] || [];
-
-    if (uniqueTags.length > 0) {
-      console.log('  ' + childName + ' [' + uniqueTags.join(', ') + ']');
-      hasSelectable = true;
-    } else {
-      console.log('  ' + childName + ' (no unique tag — cannot reference)');
-    }
-  }
-
-  if (!hasSelectable) {
-    console.log('');
-    console.log('No children can be referenced by tag. Add a distinguishing parent.');
-    console.log('');
-    show.showPosition(rl, state, onComplete);
-    return;
+    console.log('  ' + childName + ' [' + uniqueTags.join(', ') + ']');
   }
 
   console.log('');

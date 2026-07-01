@@ -5,12 +5,12 @@
 // Tree structure:
 //
 // root/
-//   test/
-//     test345/    ← tags: ["test", "test22"]
-//     testContent/ ← tags: ["test", "test22", "content-dir"]
-//   test22/
-//     test345/    ← tags: ["test", "test22"]
-//     testContent/ ← tags: ["test", "test22", "content-dir"]
+//   test/          ← tags: [root]
+//     test345/     ← tags: [test, test22]
+//     testContent/ ← tags: [test, test22, content-dir]
+//   test22/        ← tags: [root]
+//     test345/     ← tags: [test, test22]
+//     testContent/ ← tags: [test, test22, content-dir]
 //   content-dir/
 //     testContent/ ← extra parent giving testContent a unique tag
 //
@@ -128,7 +128,7 @@ FS.writeFileSync(PATH.join(stateDir, '.current-node.json'), JSON.stringify({ cur
 var result = cli(['compile']);
 assert(result.code === 0, 'compile from test should succeed');
 assert(result.stdout.indexOf('TEST branch') !== -1, 'test compile should contain "TEST branch"');
-assert(result.stdout.indexOf('TEST22 branch') === -1, 'test compile should NOT contain "TEST22 branch"');
+assert(result.stdout.indexOf('TEST22 branch') === -1, 'test22 compile should NOT contain "TEST22 branch"');
 assert(result.stdout.indexOf('error') === -1 && result.stdout.indexOf('Error') === -1, 'test compile should have no errors');
 
 // Test 2: Compile from test22 — should output TEST22 branch content

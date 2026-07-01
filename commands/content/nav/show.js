@@ -32,12 +32,7 @@ function showPosition(rl, state, onComplete) {
     for (var i = 0; i < children.length; i++) {
       var childName = children[i];
       var uniqueTags = childUniqueTags[childName] || [];
-
-      if (uniqueTags.length > 0) {
-        console.log('  ' + childName + ' [' + uniqueTags.join(', ') + ']');
-      } else {
-        console.log('  ' + childName + ' (no unique tag)');
-      }
+      console.log('  ' + childName + ' [' + uniqueTags.join(', ') + ']');
     }
     console.log('');
   }
